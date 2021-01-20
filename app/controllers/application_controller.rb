@@ -25,7 +25,7 @@ class ApplicationController < Sinatra::Base
   post '/articles' do 
    @article = Article.create(params)
    id = @article.id
-    redirect "/articles/#{id}"    
+   redirect "/articles/#{@article.id.to_s}"    
   end
 
   get '/articles/:id' do 
@@ -41,16 +41,17 @@ class ApplicationController < Sinatra::Base
   patch '/articles/:id'do 
     # binding.pry
     @article = Article.find(params["id"])
-    id = @article.id
-    @article.title = params["title"]
-    @article.content = params["content"]
-    @article.save #try again to get .update to work
-    redirect "/articles/#{id}"
+    updated_params = params.tap {|p| p.shift}
+    @article.update(updated_params)
+    # @article.title = params["title"]
+    # @article.content = params["content"]
+    # @article.save #try again to get .update to work
+    redirect "/articles/#{@article.id.to_s}"
   end
   
   delete '/articles/:id' do
-    @article = Article.find(params["id"])
-    @article.destroy
+    Article.find(params["id"]).destroy
+   
     redirect '/articles'
   end
 
